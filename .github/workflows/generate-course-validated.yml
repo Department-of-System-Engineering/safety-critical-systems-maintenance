@@ -1,0 +1,74 @@
+name: generate-notebook-course-validated
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/course_common.py'
+      - 'tools/course_part*.py'
+      - 'tools/course_postprocess.py'
+      - '.github/workflows/generate-course-validated.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-validate-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install course dependencies
+        run: pip install -e '.[dev]'
+
+      - name: Generate notebook-first course
+        run: |
+          python tools/course_part1.py
+          python tools/course_part2.py
+          python tools/course_part3.py
+          python tools/course_part4.py
+          python tools/course_postprocess.py
+
+      - name: Run unit tests
+        run: pytest -q
+
+      - name: Execute all generated notebooks from clean state
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import nbformat
+          from nbconvert.preprocessors import ExecutePreprocessor
+
+          for path in sorted(Path('course').glob('*.ipynb')):
+              nb = nbformat.read(path, as_version=4)
+              for cell in nb.cells:
+                  if cell.cell_type == 'code':
+                      cell.outputs = []
+                      cell.execution_count = None
+              ExecutePreprocessor(timeout=180, kernel_name='python3', allow_errors=False).preprocess(
+                  nb, {'metadata': {'path': str(Path.cwd())}}
+              )
+              print('RUN OK', path.name)
+          PY
+
+      - name: Commit validated notebooks
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add course/*.ipynb
+          if git diff --cached --quiet; then
+            echo 'No notebook changes.'
+          else
+            git commit -m 'Generate validated notebook-first course'
+            git push
+          fi
