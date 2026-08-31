@@ -5,23 +5,23 @@ project:
 
 book:
   title: "Biztonságkritikus rendszerek és karbantartás"
-  subtitle: "Interaktív egyetemi jegyzet"
+  subtitle: "Notebook-alapú interaktív egyetemi jegyzet"
   author: "Pannon Egyetem – Rendszer- és Számítástudományi Tanszék"
   date: today
   chapters:
     - index.qmd
-    - chapters/01_alapok.qmd
-    - chapters/02_pha_fmea_hazop.qmd
-    - chapters/03_fta.qmd
-    - chapters/04_model_based_risk.qmd
-    - chapters/05_bayes.qmd
-    - chapters/06_markov_dynamic_hazop.qmd
-    - chapters/07_monte_carlo.qmd
-    - chapters/08_redundancia_fuggosegek.qmd
-    - chapters/09_karbantartasi_strategiak.qmd
-    - chapters/10_hibadiagnosztika.qmd
-    - chapters/11_dynamic_risk_rbm.qmd
-    - chapters/12_pundit_case.qmd
+    - course/01_BIZTONSAGKRITIKUS_ALAPOK.ipynb
+    - course/02_PHA_FMEA_HAZOP.ipynb
+    - course/03_FTA.ipynb
+    - course/04_MODELLALAPU_KOCKAZAT.ipynb
+    - course/05_BAYES_HALOK.ipynb
+    - course/06_MARKOV_DYNAMIC_HAZOP.ipynb
+    - course/07_MONTE_CARLO_RITKA_ESEMENYEK.ipynb
+    - course/08_REDUNDANCIA_FUGGOSEGEK.ipynb
+    - course/09_KARBANTARTASI_STRATEGIAK.ipynb
+    - course/10_HIBADIAGNOSZTIKA.ipynb
+    - course/11_DINAMIKUS_KOCKAZAT_RBM.ipynb
+    - course/12_PUNDIT_INTEGRALT_ESET.ipynb
   appendices:
     - appendices/python_gyorstalpalo.qmd
     - appendices/jelolesek.qmd
@@ -46,7 +46,6 @@ format:
     papersize: a4
     toc: true
     number-sections: true
-    keep-tex: false
 
 execute:
   echo: true

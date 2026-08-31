@@ -2,56 +2,25 @@ project_id: 2020-1.2.3-EUREKA-2022-00021
 project_name: PUNDIT
 purpose: educational_exploitation
 technical_deliverable_claim: false
+primary_artifact_type: executable_teaching_notebook
 disclaimer: >-
   Az itt bemutatott oktatási demonstráció a PUNDIT projekt eredményeinek
   oktatási hasznosítását támogatja; nem helyettesíti és nem igazolja önmagában
   a projekt eredeti műszaki vállalásainak teljesítését.
 chapters:
-  - chapter: 01
-    topic: Reliability and risk foundations
-    pundit_link: risk-based maintenance foundations
-    artifacts: [chapter]
-  - chapter: 02
-    topic: PHA, FMEA, HAZOP
-    pundit_link: hazard identification and process safety analysis
-    artifacts: [chapter, notebook]
-  - chapter: 03
-    topic: Fault Tree Analysis
-    pundit_link: probabilistic risk models
-    artifacts: [chapter, notebook]
+  - {chapter: 01, topic: "Reliability and risk foundations", pundit_link: "risk-based maintenance foundations", artifact: "course/01_BIZTONSAGKRITIKUS_ALAPOK.ipynb"}
+  - {chapter: 02, topic: "PHA, FMEA, HAZOP", pundit_link: "hazard identification and process safety analysis", artifact: "course/02_PHA_FMEA_HAZOP.ipynb"}
+  - {chapter: 03, topic: "Fault Tree Analysis", pundit_link: "probabilistic risk models", artifact: "course/03_FTA.ipynb"}
   - chapter: 04
     topic: Model-Based Risk Analysis
     pundit_link: automated derivation of risk models from system models
-    artifacts: [chapter, notebook]
-  - chapter: 05
-    topic: Bayesian networks
-    pundit_link: combined probabilistic models and diagnostic inference
-    artifacts: [chapter, notebook]
-  - chapter: 06
-    topic: Markov models and Dynamic HAZOP
-    pundit_link: dynamic risk modelling
-    artifacts: [chapter, notebook]
-  - chapter: 07
-    topic: Monte Carlo and rare events
-    pundit_link: uncertainty-aware risk estimation
-    artifacts: [chapter, notebook]
-  - chapter: 08
-    topic: Redundancy and dependencies
-    pundit_link: system-level risk dependencies
-    artifacts: [chapter]
-  - chapter: 09
-    topic: Maintenance strategies
-    pundit_link: risk-based maintenance decision context
-    artifacts: [chapter]
-  - chapter: 10
-    topic: Fault diagnosis and sensor evidence
-    pundit_link: condition monitoring and digital-twin evidence
-    artifacts: [chapter, notebook]
-  - chapter: 11
-    topic: Dynamic risk and RBM
-    pundit_link: dynamic risk-based maintenance support
-    artifacts: [chapter, notebook]
-  - chapter: 12
-    topic: Integrated TK-101 case
-    pundit_link: integrated educational demonstration
-    artifacts: [chapter, notebook]
+    artifact: course/04_MODELLALAPU_KOCKAZAT.ipynb
+    representation_note: simplified SysML-derived representation; not a native SysML parser
+  - {chapter: 05, topic: "Bayesian networks", pundit_link: "combined probabilistic models and diagnostic inference", artifact: "course/05_BAYES_HALOK.ipynb"}
+  - {chapter: 06, topic: "Markov models and Dynamic HAZOP", pundit_link: "dynamic risk modelling", artifact: "course/06_MARKOV_DYNAMIC_HAZOP.ipynb"}
+  - {chapter: 07, topic: "Monte Carlo and rare events", pundit_link: "uncertainty-aware risk estimation", artifact: "course/07_MONTE_CARLO_RITKA_ESEMENYEK.ipynb"}
+  - {chapter: 08, topic: "Redundancy and dependencies", pundit_link: "system-level risk dependencies", artifact: "course/08_REDUNDANCIA_FUGGOSEGEK.ipynb"}
+  - {chapter: 09, topic: "Maintenance strategies", pundit_link: "risk-based maintenance decision context", artifact: "course/09_KARBANTARTASI_STRATEGIAK.ipynb"}
+  - {chapter: 10, topic: "Fault diagnosis and sensor evidence", pundit_link: "condition monitoring and digital-twin evidence", artifact: "course/10_HIBADIAGNOSZTIKA.ipynb"}
+  - {chapter: 11, topic: "Dynamic risk and RBM", pundit_link: "dynamic risk-based maintenance support", artifact: "course/11_DINAMIKUS_KOCKAZAT_RBM.ipynb"}
+  - {chapter: 12, topic: "Integrated TK-101 case", pundit_link: "integrated educational demonstration", artifact: "course/12_PUNDIT_INTEGRALT_ESET.ipynb"}

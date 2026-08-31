@@ -1,61 +1,15 @@
----
-title: "Biztonságkritikus rendszerek és karbantartás"
----
+# Biztonságkritikus rendszerek és karbantartás
 
-# A jegyzet célja {-}
+Ez a kurzus **notebook-first** tananyag: a teljes tanulási folyamat a `course/` Jupyter notebookjaiban található, magyarázó Markdown cellákkal, képletekkel, lépésről lépésre felépített Python-kóddal, ábrákkal, TK-101 példákkal és hallgatói feladatokkal.
 
-Ez a jegyzet a biztonságkritikus rendszerek kockázatértékelésének, megbízhatósági modellezésének, hibadiagnosztikájának és kockázatalapú karbantartásának egymásra épülő módszereit tárgyalja. A hangsúly nem az egyes technikák elszigetelt bemutatásán, hanem a módszerek közötti átjárhatóságon van: ugyanazt a rendszert vizsgáljuk veszélyazonosítási, hibafa-, Bayes-, Markov-, szimulációs és karbantartási nézőpontból.
+A Quarto ennek publikációs/export rétege, nem külön elsődleges tananyag.
 
-A tananyag egy 14 hetes, heti 2 órás egyetemi kurzushoz készült. A 7. és 14. hét számonkérési/projektbemutatási hét, ezért a könyv 12 szakmai fejezetből áll.
+## Tanulási ív
 
-## 14 hetes kurzusütemezés
+**rendszer → veszély → failure mode → PHA/FMEA/HAZOP → FTA → model-based risk → Bayes → Markov → Monte Carlo → függőségek → maintenance → diagnosis → dynamic risk → RBM decision**
 
-| Hét | Téma | Fő módszer/output |
-|---:|---|---|
-| 1 | Biztonságkritikus rendszerek, reliability és risk | alapfogalmak, $R(t)$, availability |
-| 2 | PHA, FMEA, HAZOP | hazard/failure/deviation register |
-| 3 | Fault Tree Analysis | minimal cut sets, top-event probability |
-| 4 | Model-Based Risk Analysis | simplified SysML-derived model → FTA |
-| 5 | Bayesian networks | predictive és diagnostic inference |
-| 6 | Markov + Dynamic HAZOP | state probability, dynamic scenario |
-| 7 | 1. ZH / case checkpoint | integrált számonkérés |
-| 8 | Monte Carlo és rare events | uncertainty propagation, splitting intuition |
-| 9 | Redundancia és függőségek | k-out-of-n, CCF, dependency graph |
-| 10 | Maintenance strategies | TBM, UBM, CBM, PdM, RBM |
-| 11 | Fault diagnosis | residual, detection, evidence |
-| 12 | Dynamic risk | posterior risk update |
-| 13 | Integrált PUNDIT case | risk-informed maintenance decision |
-| 14 | 2. ZH / projektbemutatás | projektvédés |
+A közös esettanulmány a **TK-101 éghető folyadék fogadó- és tárolórendszer**.
 
-## Végigfutó esettanulmány
-
-A fejezeteket a **TK-101 éghető folyadék fogadó- és tárolórendszer** kapcsolja össze. A példa szándékosan egyszerűsített oktatási modell. A rendszerben folyamatos szintmérés, magas szintű riasztás, magas-magas szintű automatikus leállítás, kezelői beavatkozás, karbantartási állapotkövetés, folyadék-visszatartás és tűzvédelmi funkciók találhatók.
-
-A félév során ugyanaz a veszélylánc egyre részletesebb modellé fejlődik:
-
-**szenzorromlás → elhalasztott karbantartás → védelmi funkció romlása → riasztási kihívás → leállítási hiba → túlfolyás → gyulladás → tűzesemény**.
-
-## PUNDIT oktatási hasznosítás
-
-A jegyzet a PUNDIT projekt (`2020-1.2.3-EUREKA-2022-00021`) kutatási témáihoz kapcsolódó módszereket oktatási kontextusban demonstrálja, különösen a kockázati modellezés, dinamikus állapotbecslés, digitális modellből származtatott kockázati reprezentáció és kockázatalapú karbantartási döntések területén.
-
-::: {.callout-important title="Értelmezési korlát"}
-Az itt bemutatott oktatási demonstráció a PUNDIT projekt eredményeinek oktatási hasznosítását támogatja; **nem helyettesíti és nem igazolja önmagában a projekt eredeti műszaki vállalásainak teljesítését**.
+::: {.callout-note title="PUNDIT educational exploitation"}
+A tananyag a PUNDIT projekt (`2020-1.2.3-EUREKA-2022-00021`) eredményeinek oktatási hasznosítását támogatja; nem helyettesíti és nem igazolja önmagában a projekt eredeti műszaki vállalásainak teljesítését.
 :::
-
-## A fejezetek használata
-
-Minden fejezet ugyanazt a tanulási ívet követi:
-
-1. probléma és motiváció;
-2. alapfogalmak;
-3. módszer;
-4. rövid kézi példa;
-5. alkalmazás a TK-101 esettanulmányon;
-6. Python/Jupyter demonstráció;
-7. eredmények értelmezése;
-8. korlátok és feltételezések;
-9. hallgatói feladat;
-10. átvezetés a következő témára.
-
-A futtatható példák a `notebooks/`, az újrahasznosítható algoritmusok a `src/safetycourse/`, a közös esettanulmány adatai pedig a `data/pundit_case/` könyvtárban találhatók.
