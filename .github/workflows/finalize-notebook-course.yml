@@ -1,0 +1,88 @@
+name: finalize-notebook-first-course
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/finalize_course.py'
+      - '.github/workflows/finalize-notebook-course.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-validate-finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -e '.[dev]'
+
+      - name: Generate all 12 teaching notebooks
+        run: |
+          python tools/course_part1.py
+          python tools/course_part2.py
+          python tools/course_part3.py
+          python tools/course_part4.py
+          python tools/course_postprocess.py
+
+      - name: Unit tests
+        run: pytest -q
+
+      - name: Execute all generated notebooks
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import nbformat
+          from nbconvert.preprocessors import ExecutePreprocessor
+
+          paths = sorted(Path('course').glob('*.ipynb'))
+          assert len(paths) == 12, len(paths)
+          for path in paths:
+              nb = nbformat.read(path, as_version=4)
+              for cell in nb.cells:
+                  if cell.cell_type == 'code':
+                      cell.outputs = []
+                      cell.execution_count = None
+              ExecutePreprocessor(timeout=180, kernel_name='python3', allow_errors=False).preprocess(
+                  nb, {'metadata': {'path': str(Path.cwd())}}
+              )
+              print('RUN OK', path.name)
+          PY
+
+      - name: Finalize notebook-first repository structure
+        run: python tools/finalize_course.py
+
+      - name: Validate final YAML files
+        run: |
+          python - <<'PY'
+          import yaml
+          for p in ['_quarto.yml','project/pundit_traceability.yml']:
+              with open(p,encoding='utf-8') as f:
+                  yaml.safe_load(f)
+              print('YAML OK',p)
+          PY
+
+      - name: Commit validated notebook-first course
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes.'
+          else
+            git commit -m 'Rebuild course as validated notebook-first teaching material'
+            git pull --rebase origin main
+            git push
+          fi
