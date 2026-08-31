@@ -1,0 +1,57 @@
+project:
+  type: book
+  output-dir: _book
+  execute-dir: project
+
+book:
+  title: "Biztonságkritikus rendszerek és karbantartás"
+  subtitle: "Interaktív egyetemi jegyzet"
+  author: "Pannon Egyetem – Rendszer- és Számítástudományi Tanszék"
+  date: today
+  chapters:
+    - index.qmd
+    - chapters/01_alapok.qmd
+    - chapters/02_pha_fmea_hazop.qmd
+    - chapters/03_fta.qmd
+    - chapters/04_model_based_risk.qmd
+    - chapters/05_bayes.qmd
+    - chapters/06_markov_dynamic_hazop.qmd
+    - chapters/07_monte_carlo.qmd
+    - chapters/08_redundancia_fuggosegek.qmd
+    - chapters/09_karbantartasi_strategiak.qmd
+    - chapters/10_hibadiagnosztika.qmd
+    - chapters/11_dynamic_risk_rbm.qmd
+    - chapters/12_pundit_case.qmd
+  appendices:
+    - appendices/python_gyorstalpalo.qmd
+    - appendices/jelolesek.qmd
+  repo-url: https://github.com/ruptomi22/safety-critical-systems-maintenance
+  repo-actions: [edit, issue]
+
+bibliography: references.bib
+lang: hu
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+    code-fold: false
+    code-tools: true
+    fig-align: center
+    link-external-newwindow: true
+  pdf:
+    documentclass: scrreprt
+    pdf-engine: xelatex
+    papersize: a4
+    toc: true
+    number-sections: true
+    keep-tex: false
+
+execute:
+  echo: true
+  warning: false
+  error: false
+  freeze: auto
+
+jupyter: python3

@@ -1,0 +1,166 @@
+# Veszélyazonosítás: PHA, FMEA és HAZOP
+
+## Tanulási célok
+
+A fejezet végére a hallgató:
+
+- el tud készíteni egy egyszerű Preliminary Hazard Analysis (PHA) táblát;
+- érti a FMEA funkció–hiba–hatás logikáját;
+- ki tudja számítani az RPN-t, de ismeri annak korlátait;
+- HAZOP node, parameter, guide word és deviation alapján strukturált vizsgálatot tud végezni;
+- képes ugyanazon TK-101 veszélyláncot a három módszer eltérő nézőpontjából leírni.
+
+::: {.callout-note title="PUNDIT kapcsolat"}
+A fejezet a veszélyazonosítás és folyamatbiztonsági elemzés módszereit kapcsolja a későbbi valószínűségi és dinamikus modellekhez. Az anyag oktatási demonstráció.
+:::
+
+## 1. Mi a probléma?
+
+A kockázati modell minőségét nem a matematikai formalizmus önmagában határozza meg. Ha a releváns veszélyt, hibamódot vagy eltérést nem azonosítottuk, akkor egy pontos számítás is a rossz kérdésre ad pontos választ.
+
+A PHA, FMEA és HAZOP ezért elsősorban **strukturált kérdezési módszerek**. Más-más nézőpontból kényszerítik a mérnököt a rendszer feltételezéseinek és hibalehetőségeinek feltárására.
+
+## 2. PHA – Preliminary Hazard Analysis
+
+A PHA korai életciklusban alkalmazható, magas szintű veszélyazonosítás. Tipikus kérdései:
+
+- mi a veszélyforrás?
+- mi az iniciáló esemény?
+- mi lehet a következmény?
+- milyen meglévő védelem van?
+- szükséges-e további elemzés vagy intézkedés?
+
+Egy egyszerű kockázati mátrix valószínűségi és következményi kategóriákat kombinálhat. A kategóriák és elfogadási határok azonban szervezet- és alkalmazásfüggők; egy konkrét mátrix számai nem tekinthetők univerzális szabálynak.
+
+### TK-101 PHA-részlet
+
+| Hazard | Iniciáló esemény | Következmény | Meglévő védelem | További elemzés |
+|---|---|---|---|---|
+| túlfolyás | magas szint + sikertelen megszakítás | loss of containment | LT, LSHH, XV, kezelő | HAZOP + FTA |
+| tűz | kiömlés + gyújtóforrás | személyi/eszköz kár | bund, tűzvédelem | event/FTA, dinamikus modell |
+| rejtett védelmi hiba | proof test elmarad | kockázat növekedése | CMMS | FMEA + maintenance analysis |
+
+## 3. FMEA – Failure Modes and Effects Analysis
+
+A FMEA alapkérdése nem az, hogy „milyen baleset történhet?”, hanem hogy egy funkció vagy elem **milyen módon hibásodhat meg, és ennek mi a hatása**.
+
+Tipikus oszlopok:
+
+- item/function;
+- failure mode;
+- cause;
+- local/system effect;
+- existing control;
+- severity (S);
+- occurrence (O);
+- detection (D);
+- recommended action.
+
+### 3.1 RPN
+
+A klasszikus Risk Priority Number:
+
+$$
+\mathrm{RPN}=S\cdot O\cdot D.
+$$
+
+Ha mindhárom skála 1–10 közötti, az RPN 1–1000 közé esik. Az RPN könnyen számolható, de több fontos korlátja van:
+
+- különböző $(S,O,D)$ kombinációk azonos RPN-t adhatnak;
+- a skálák ordinális jellege miatt a szorzás matematikai jelentése korlátozott;
+- egy súlyos, de ritka hiba alacsonyabb RPN-t kaphat egy kevésbé súlyos eseménynél;
+- rögzített, „mindenhol érvényes” RPN-határérték nem indokolt.
+
+Ezért a kurzusban az RPN mellett **severity-first** rendezést is használunk: először a következmény súlyosságát, majd az előfordulást és észlelhetőséget vizsgáljuk. Ez egy átlátható oktatási prioritási logika, nem valamely proprietáris szabványos Action Priority tábla reprodukciója.
+
+### Kézi példa
+
+LT-101 fouling esetén legyen $S=9$, $O=4$, $D=6$:
+
+$$
+\mathrm{RPN}=9\cdot4\cdot6=216.
+$$
+
+A 216 önmagában nem mondja meg, hogy „elfogadható-e”. A döntéshez ismernünk kell a skáladefiníciókat, szervezeti kritériumokat, a biztonsági funkció szerepét és az intézkedések költségét.
+
+## 4. HAZOP
+
+A HAZOP a folyamatot **node-okra** bontja, majd paraméterek és **guide word** kombinációival keres eltéréseket.
+
+Példák guide word-ökre:
+
+- NO;
+- MORE;
+- LESS;
+- REVERSE;
+- OTHER THAN.
+
+A logika:
+
+$$
+\text{parameter} + \text{guide word} \rightarrow \text{deviation}
+$$
+
+majd:
+
+$$
+\text{deviation} \rightarrow \text{causes} \rightarrow \text{consequences} \rightarrow \text{safeguards} \rightarrow \text{actions}.
+$$
+
+### TK-101 HAZOP-részlet
+
+| Node | Parameter | Guide word | Deviation | Lehetséges ok | Következmény | Safeguard |
+|---|---|---|---|---|---|---|
+| TK-101 filling | level | MORE | high level | excess inflow; LT bias | overflow | LAH, LSHH, XV |
+| TK-101 filling | flow | MORE | excess flow | pump/control fault | level rise | control + trip |
+| shutdown function | shutdown | NO | no shutdown | LSHH/XV fail | overflow | operator action |
+| level measurement | signal | LESS | measured level too low | fouling/bias | delayed detection | proof test, comparison |
+
+## 5. A három módszer kapcsolata
+
+A módszerek nem versenytársak:
+
+- **PHA:** gyors, magas szintű veszélytérkép;
+- **FMEA:** komponens/funkció felől induló hibamód-elemzés;
+- **HAZOP:** folyamateltérések szisztematikus vizsgálata.
+
+Egy későbbi FTA basic eventje lehet például FMEA-ban azonosított failure mode, míg a top event egy PHA/HAZOP során azonosított veszélyes rendszerállapot.
+
+## 6. Python/Jupyter demonstráció
+
+```{python}
+from pathlib import Path
+import yaml
+from safetycourse.fmea import rank_fmea
+
+path = Path("../data/pundit_case/failure_modes.yaml") if Path("../data/pundit_case/failure_modes.yaml").exists() else Path("data/pundit_case/failure_modes.yaml")
+records = yaml.safe_load(path.read_text(encoding="utf-8"))["failure_modes"]
+rank_fmea(records, method="severity_first")[["failure_mode", "severity", "occurrence", "detection", "rpn"]]
+```
+
+A notebookban ugyanaz a táblázat RPN és severity-first sorrendben is megjeleníthető. A cél nem egy „helyes” rangsor kijelölése, hanem annak felismerése, hogy a prioritás a döntési szabálytól függ.
+
+## 7. Eredmények értelmezése
+
+A kvalitatív elemzések egyik legfontosabb outputja a **strukturált eseménykatalógus**. Minden későbbi kvantitatív modell előtt ellenőrizzük:
+
+- egyértelmű-e az esemény definíciója;
+- nem keverjük-e az okot és a következményt;
+- megkülönböztetjük-e a detektálást és a megelőzést;
+- egy védelmi funkció ténylegesen független-e egy másiktól;
+- van-e rejtett közös ok.
+
+## 8. Korlátok
+
+A PHA/FMEA/HAZOP nem ad automatikusan valószínűségi modellt. A workshop minősége függ a résztvevők tapasztalatától, a rendszerhatár meghatározásától és az információ teljességétől. A módszerek statikus táblázatai nehezen kezelhetik az időbeli sorrendet és az állapotfüggő kockázatot; erre később Markov- és dinamikus módszereket használunk.
+
+## 9. Hallgatói feladat
+
+1. Készíts legalább öt soros FMEA-t a TK-101 rendszerre.
+2. Rendezd az eredményt RPN és severity-first módon. Magyarázd meg a sorrendeltérést.
+3. Végezz mini-HAZOP-ot a „TK-101 filling” node-on legalább négy guide word használatával.
+4. Válassz egy HAZOP-deviationt, amelyből a következő fejezetben FTA top event készíthető.
+
+## 10. Mit viszünk tovább?
+
+A következő fejezet a kiválasztott veszélyes eseményt **hibafává (Fault Tree)** alakítja. A kvalitatív eseményeket logikai kapukkal kombináljuk, minimal cut seteket keresünk, majd valószínűséget és érzékenységet számítunk.

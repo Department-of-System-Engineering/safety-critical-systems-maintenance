@@ -1,0 +1,170 @@
+# Markov-modellek és Dynamic HAZOP
+
+## Tanulási célok
+
+A fejezet végére a hallgató:
+
+- érti a Markov-tulajdonságot és az állapottér szerepét;
+- fel tud írni egyszerű DTMC/CTMC modellt;
+- értelmezi a CTMC generátormátrixát;
+- képes állapotvalószínűséget számítani $p(t)=p(0)e^{Qt}$ formában;
+- megérti a statikus HAZOP és az időfüggő folyamatmodell összekapcsolásának Dynamic HAZOP alapgondolatát.
+
+::: {.callout-note title="PUNDIT kapcsolat"}
+A fejezet a dinamikus Markov-modellezés és dinamikus veszélyelemzés oktatási demonstrációja. Nem műszaki deliverable-validáció.
+:::
+
+## 1. Mi a probléma?
+
+A fault tree azt mondhatja, hogy bizonyos események együtt túlfolyást okoznak. A valós rendszerben azonban számít:
+
+- mikor romlik le a szenzor;
+- mennyi ideig marad rejtve a hiba;
+- van-e közben karbantartás;
+- mikor érkezik folyamatkihívás;
+- van-e idő a helyreállításra;
+- milyen sorrendben következnek be az események.
+
+A Markov-modell a rendszer állapotát és az állapotok közötti átmenetet teszi elsődleges objektummá.
+
+## 2. Markov-tulajdonság
+
+Egyszerűen megfogalmazva: a következő állapot eloszlása a jelenlegi állapot ismeretében nem igényli a teljes múlt ismeretét.
+
+Diszkrét időben:
+
+$$
+P(X_{k+1}=j\mid X_k=i,X_{k-1},\ldots)=P(X_{k+1}=j\mid X_k=i).
+$$
+
+Ez erős modellezési feltételezés. Ha például az öregedéshez a komponens „kora” szükséges, akkor azt is be kell emelni az állapotba vagy nem-Markov modellt kell választani.
+
+## 3. DTMC és CTMC
+
+Diszkrét idejű Markov-láncban a transition matrix $P$ eleme:
+
+$$
+p_{ij}=P(X_{k+1}=j\mid X_k=i).
+$$
+
+Folytonos időben a generator matrix $Q$ off-diagonális $q_{ij}\ge0$ elemei átmeneti ráták, a diagonális elem:
+
+$$
+q_{ii}=-\sum_{j\ne i}q_{ij}.
+$$
+
+Az állapotvalószínűség-vektor:
+
+$$
+p(t)=p(0)e^{Qt}.
+$$
+
+## 4. Kézi kétállapotú modell
+
+Legyen:
+
+- $S_0$: működő;
+- $S_1$: hibás;
+- meghibásodási ráta $\lambda$;
+- javítási ráta $\mu$.
+
+A generátormátrix:
+
+$$
+Q=
+\begin{bmatrix}
+-\lambda & \lambda\\
+\mu & -\mu
+\end{bmatrix}.
+$$
+
+A stacionárius működési valószínűség:
+
+$$
+\pi_0=\frac{\mu}{\lambda+\mu},
+$$
+
+ami ugyanaz a rendelkezésre állási formula, amelyet az első fejezetben használtunk.
+
+## 5. TK-101 állapotmodell
+
+A teljes barrier-kombinációk felsorolása gyors állapottér-robbanáshoz vezetne. Ezért oktatási modellünk aggregált állapotokat használ:
+
+- $S_0$: Normal;
+- $S_1$: Sensor degraded;
+- $S_2$: Protection degraded / maintenance overdue;
+- $S_3$: High-level challenge;
+- $S_4$: Overflow;
+- $S_5$: Fire.
+
+A karbantartás bizonyos degradált állapotokból visszavezethet $S_0$-ba. Nem minden barrier külön állapot: néhány hatását átmeneti ráta vagy későbbi feltételes paraméter reprezentálja.
+
+Ez fontos modellezési döntés: **az állapotnak csak azt az információt kell hordoznia, amely a következő átmenetekhez szükséges**.
+
+## 6. Python/Jupyter demonstráció
+
+```{python}
+import numpy as np
+from safetycourse.markov import transient_probabilities
+
+# S0 normal, S1 sensor degraded, S2 challenge, S3 overflow
+lam_sensor = 0.002
+mu_maint = 0.08
+lam_challenge = 0.004
+mu_recover = 0.20
+lam_overflow = 0.01
+
+Q = np.array([
+    [-(lam_sensor + lam_challenge), lam_sensor, lam_challenge, 0.0],
+    [mu_maint, -(mu_maint + lam_challenge), lam_challenge, 0.0],
+    [mu_recover, 0.0, -(mu_recover + lam_overflow), lam_overflow],
+    [0.0, 0.0, 0.0, 0.0],
+])
+
+p0 = np.array([1.0, 0.0, 0.0, 0.0])
+times = np.array([0, 10, 50, 100, 250])
+P = transient_probabilities(Q, p0, times)
+for t, row in zip(times, P):
+    print(t, np.round(row, 6))
+```
+
+A modellben `Overflow` abszorbeáló állapot. Egy másik elemzési célhoz – például recovery vagy containment modellezéshez – ez módosítható.
+
+## 7. Dynamic HAZOP
+
+A statikus HAZOP egy deviationt vizsgál: például `MORE level`. Dynamic HAZOP esetén a deviation mögé **dinamikus folyamatmodell** kerül, így vizsgálható:
+
+- mikor lépi át a szint a veszélyes tartományt;
+- milyen kezdeti állapotok mellett történik ez;
+- a vezérlés és védelem válaszideje elegendő-e;
+- milyen sorrendben aktiválódnak a védelmek;
+- egy hiba hogyan változtatja meg a folyamat trajektóriáját.
+
+Egy egyszerű gondolati példa:
+
+$$
+\frac{dh}{dt}=\frac{q_{in}-q_{out}}{A}.
+$$
+
+Ha `MORE flow` miatt $q_{in}$ nő, és a shutdown nem állítja le időben, a HAZOP deviation nemcsak szöveges következmény, hanem időbeli trajectory lesz.
+
+A Markov- és dinamikus folyamatmodell nem ugyanaz. A kurzus célja annak megértése, hogyan választható a megfelelő absztrakció az elemzési kérdéshez.
+
+## 8. Korlátok
+
+- A memória nélküli ráták nem írnak le minden öregedési folyamatot.
+- Az aggregált állapotok elrejthetnek fontos barrier-kombinációkat.
+- A ráták becslése külön adat-/szakértői feladat.
+- A Dynamic HAZOP teljes ipari megvalósítása részletes fizikai és vezérlési modellt igényelhet.
+- A fejezet példája nem bizonyítja automatikusan egy valós rendszer kockázatát.
+
+## 9. Hallgatói feladat
+
+1. Készíts kétállapotú sensor healthy/degraded CTMC-t és vizsgáld a javítási ráta hatását.
+2. Bővítsd a fenti TK-101 modellt külön `ProtectionDegraded` állapottal.
+3. Határozd meg, mely HAZOP deviationoknál fontos az időbeli sorrend.
+4. Írj egy példát arra, amikor a Markov-tulajdonság sérülne, ha az állapotból kihagynánk egy szükséges információt.
+
+## 10. Mit viszünk tovább?
+
+Az első hat fejezet után rendelkezünk kvalitatív, logikai, Bayes- és állapottér-modellekkel. A következő blokkban a **bizonytalanságot, ritka eseményeket és szimulációt** tesszük explicit vizsgálati tárggyá.

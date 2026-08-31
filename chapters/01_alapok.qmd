@@ -1,0 +1,201 @@
+# Biztonságkritikus rendszerek, megbízhatóság és kockázat
+
+## Tanulási célok
+
+A fejezet végére a hallgató képes:
+
+- megkülönböztetni a **veszély (hazard)**, **kockázat (risk)**, **hiba (fault)** és **meghibásodás (failure)** fogalmát;
+- értelmezni a megbízhatóságot, meghibásodási intenzitást és rendelkezésre állást;
+- egyszerű soros és párhuzamos rendszerek megbízhatóságát kiszámítani;
+- a valószínűség és következmény szerepét külön kezelni a kockázati döntésekben;
+- azonosítani, milyen információk szükségesek a TK-101 rendszer későbbi kockázati modelljeihez.
+
+**Előismeret:** alapvető valószínűségszámítás, műszaki rendszerszemlélet.
+
+::: {.callout-note title="PUNDIT kapcsolat"}
+A fejezet a kockázatalapú karbantartás és a dinamikus kockázatbecslés fogalmi alapját adja. A kapcsolat oktatási hasznosítás; nem műszaki teljesítési igazolás.
+:::
+
+## 1. Mi a probléma?
+
+Egy biztonságkritikus rendszerben nem elegendő azt kérdezni, hogy „működik-e”. A mérnöki döntéshez legalább négy kérdést külön kell választani:
+
+1. Mi romolhat el?
+2. Milyen gyakran vagy milyen valószínűséggel történhet meg?
+3. Mi a következmény?
+4. Milyen műszaki vagy szervezeti beavatkozással csökkenthető a kockázat?
+
+A **safety-critical** jelző olyan rendszerre vagy funkcióra utal, amelynek hibája elfogadhatatlan személyi, környezeti, vagyoni vagy társadalmi következményt okozhat. A „kritikusság” ezért nem önmagában egy komponens tulajdonsága: a rendszerkörnyezet, a funkció, a veszélylánc és a következmény együtt határozza meg.
+
+A TK-101 példában egy szinttávadó hibája önmagában nem jelent tüzet. A veszély akkor alakul ki, ha a hiba más eseményekkel kombinálódik: például a karbantartás elmarad, a magas szintű helyzetet nem kezelik, a leállító funkció sem hatásos, túlfolyás történik, majd gyújtóforrás is jelen van.
+
+## 2. Alapfogalmak
+
+### 2.1 Fault, error, failure
+
+A szakirodalomban a fogalmak használata területenként eltérhet, ezért a kurzusban a következő munkadefiníciókat használjuk:
+
+- **fault:** feltételezett vagy azonosított ok/hibaállapot, amely hibás működéshez vezethet;
+- **error:** a rendszer belső állapotának eltérése a kívánt/helyes állapottól;
+- **failure:** a kívánt funkció teljesítésének elvesztése vagy elfogadhatatlan mértékű romlása.
+
+A diagnosztikai fejezetben ezek közötti okozati láncot részletesebben használjuk.
+
+### 2.2 Hazard és risk
+
+A **hazard** potenciális veszélyforrás vagy veszélyes állapot. A **risk** a bizonytalanság mellett bekövetkező következmények mérnöki jellemzése. Egyszerű oktatási formában gyakran:
+
+$$
+R = P(H)\,C,
+$$
+
+ahol $P(H)$ a veszélyes esemény valószínűsége, $C$ pedig a következmény egy választott mérőszáma.
+
+Ez a szorzat hasznos első közelítés, de nem univerzális kockázatdefiníció. Többféle következmény, időfüggés, emberi tényező, bizonytalanság és kockázati tolerancia esetén a teljes döntési modell gazdagabb.
+
+### 2.3 Megbízhatóság
+
+Legyen $T$ egy komponens meghibásodásáig eltelt idő. A megbízhatósági függvény:
+
+$$
+R(t)=P(T>t).
+$$
+
+A meghibásodási eloszlás:
+
+$$
+F(t)=P(T\leq t)=1-R(t).
+$$
+
+Ha az élettartam exponenciális és a meghibásodási intenzitás állandó, akkor:
+
+$$
+R(t)=e^{-\lambda t}, \qquad F(t)=1-e^{-\lambda t},
+$$
+
+és
+
+$$
+\mathrm{MTTF}=\frac{1}{\lambda}.
+$$
+
+Az állandó $\lambda$ kényelmes modell, de nem minden fizikai öregedési folyamatra reális. Kopás, fáradás vagy öregedés esetén a meghibásodási intenzitás időben változhat.
+
+### 2.4 Javítható rendszerek és rendelkezésre állás
+
+Egyszerű kétállapotú, exponenciális meghibásodás-javítás modellben a meghibásodási ráta $\lambda$, a javítási ráta $\mu$. A hosszú távú rendelkezésre állás:
+
+$$
+A_\infty=\frac{\mu}{\lambda+\mu}.
+$$
+
+Ha az átlagos működési idő $\mathrm{MTTF}$ és az átlagos javítási idő $\mathrm{MTTR}$ ismert, gyakran használható:
+
+$$
+A \approx \frac{\mathrm{MTTF}}{\mathrm{MTTF}+\mathrm{MTTR}}.
+$$
+
+A későbbi Markov-fejezet megmutatja, hogyan következik ez állapotmodellből.
+
+## 3. Egyszerű rendszerszintű megbízhatóság
+
+Független komponensek esetén egy soros rendszer akkor működik, ha minden elem működik:
+
+$$
+R_\mathrm{series}=\prod_{i=1}^{n}R_i.
+$$
+
+Két független, párhuzamosan redundáns elem esetén a rendszer akkor hibás, ha mindkettő hibás:
+
+$$
+R_\mathrm{parallel}=1-(1-R_1)(1-R_2).
+$$
+
+A függetlenség itt kulcsfeltétel. Ha két redundáns érzékelőt ugyanaz a szennyeződés, energiaellátási hiba vagy környezeti hatás tesz működésképtelenné, a fenti képlet túl optimista lehet.
+
+## 4. Kézi példa
+
+Egy védelmi szenzor exponenciális meghibásodási rátája legyen
+
+$$
+\lambda=2\times10^{-5}\;\mathrm{h}^{-1}.
+$$
+
+1000 üzemóra után:
+
+$$
+R(1000)=e^{-0.02}\approx0.9802.
+$$
+
+A meghibásodás valószínűsége tehát körülbelül 1,98%. Ez még nem azonos egy veszélyes esemény valószínűségével: a rendszerben más védelmek is lehetnek, illetve a szenzorhibának nem minden megvalósulása vezet veszélyhez.
+
+## 5. TK-101 alkalmazás
+
+A féléves esettanulmány első rendszerszintű felbontása:
+
+| Funkció | Fő elem | Példa hibára | Lehetséges következmény |
+|---|---|---|---|
+| szint mérése | LT-101 | lefelé torzító mérés | veszélyes szint késői felismerése |
+| high-high védelem | LSHH-101 | fail on demand | automatikus trip nem indul |
+| betáplálás megszakítása | XV-101 | nem zár | töltés folytatódik |
+| kezelői felügyelet | HMI + operátor | riasztás nem észlelt | manuális recovery elmarad |
+| karbantartás | CMMS + folyamat | esedékesség elhalasztva | rejtett hiba fennmarad |
+| következménycsökkentés | bund + tűzvédelem | nem hatásos | eszkaláció |
+
+A táblázat még nem kockázati modell. A következő fejezetben strukturált veszélyazonosítássá alakítjuk.
+
+## 6. Python-demonstráció
+
+```{python}
+import math
+
+lam = 2e-5
+hours = 1000
+R = math.exp(-lam * hours)
+F = 1 - R
+print(f"R(1000 h) = {R:.4f}")
+print(f"F(1000 h) = {F:.4f}")
+```
+
+Két független, azonos megbízhatóságú elem 1oo2 párhuzamos elrendezésében:
+
+```{python}
+R_component = 0.98
+R_parallel = 1 - (1 - R_component)**2
+R_parallel
+```
+
+## 7. Eredmények értelmezése
+
+A számítás csak akkor hasznos, ha világos, mit jelent az esemény. A „komponens meghibásodási valószínűsége”, a „védelmi funkció igénybevételkori hibavalószínűsége” és a „veszélyes esemény gyakorisága” nem cserélhető fel automatikusan.
+
+A biztonsági elemzésben ezért minden valószínűséghez célszerű rögzíteni:
+
+- az esemény definícióját;
+- az időhorizontot vagy az igények számát;
+- az adatforrást;
+- a modellfeltételezéseket;
+- a bizonytalanságot.
+
+## 8. Korlátok
+
+Az egyszerű exponenciális és független komponensmodellek nem kezelik automatikusan:
+
+- az öregedést és állapotfüggő meghibásodást;
+- a közös okú hibákat;
+- az emberi és szervezeti tényezők időbeli változását;
+- a karbantartási beavatkozások hatását;
+- a dinamikus folyamatállapotot.
+
+Ezeket a későbbi fejezetek fokozatosan beépítik.
+
+## 9. Hallgatói feladat
+
+1. Fogalmazd meg a TK-101 rendszer legalább három hazardját és öt failure mode-ját.
+2. Egy komponensre $\lambda=4\times10^{-5}\;\mathrm{h}^{-1}$. Számítsd ki $R(500)$ és $R(5000)$ értékét.
+3. Hasonlíts össze egy kétkomponensű soros és egy kétkomponensű párhuzamos rendszert, ha mindkét komponens megbízhatósága 0,97.
+4. Írj példát arra, amikor a függetlenségi feltételezés veszélyesen optimista eredményt adna.
+
+## 10. Mit viszünk tovább?
+
+A következő fejezetben a „mi romolhat el?” kérdést három kvalitatív/semikvantitatív módszerrel strukturáljuk: **PHA, FMEA és HAZOP**. Ezek szolgáltatják a későbbi hibafa és valószínűségi modellek eseményeinek jelentős részét.

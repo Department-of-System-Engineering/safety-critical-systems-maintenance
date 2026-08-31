@@ -1,0 +1,25 @@
+failure_modes:
+  - failure_mode: LT-101 lefelé torzító mérés
+    cause: Szenzorfelület szennyeződése
+    effect: A valós szint alulbecslése
+    severity: 9
+    occurrence: 4
+    detection: 6
+  - failure_mode: LSHH-101 igénybevételkori hiba
+    cause: Rejtett védelmi hiba / elégtelen proof test
+    effect: Automatikus leállítás nem indul
+    severity: 10
+    occurrence: 2
+    detection: 7
+  - failure_mode: XV-101 nem zár
+    cause: Mechanikai beszorulás vagy aktuátorhiba
+    effect: Betáplálás nem szakad meg
+    severity: 10
+    occurrence: 2
+    detection: 5
+  - failure_mode: Riasztásra nincs időbeni reakció
+    cause: Figyelmi terhelés / nem megfelelő riasztáskezelés
+    effect: Manuális védelmi lehetőség elvész
+    severity: 9
+    occurrence: 3
+    detection: 4

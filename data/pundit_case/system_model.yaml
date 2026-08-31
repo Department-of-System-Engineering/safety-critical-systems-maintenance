@@ -1,0 +1,121 @@
+metadata:
+  name: TK-101 éghető folyadék fogadó- és tárolórendszer
+  representation: simplified SysML-derived educational system model
+  data_status: synthetic educational data
+  project: 2020-1.2.3-EUREKA-2022-00021
+
+components:
+  - id: TK101
+    type: tank
+    function: store_flammable_liquid
+    failure_modes:
+      - id: TK101_LEAK
+        name: Tartály integritási hiba
+        mode: loss_of_integrity
+        probability: 0.0005
+  - id: P101
+    type: pump
+    function: feed_tank
+    failure_modes:
+      - id: P101_EXCESS
+        name: Túlzott betáplálás
+        mode: excess_flow
+        probability: 0.03
+  - id: LT101
+    type: level_transmitter
+    function: measure_level
+    failure_modes:
+      - id: LT101_LOW
+        name: LT-101 szennyeződés / lefelé torzító mérés
+        mode: failed_low
+        probability: 0.02
+  - id: LSHH101
+    type: high_high_level_switch
+    function: initiate_shutdown
+    failure_modes:
+      - id: LSHH101_FOD
+        name: LSHH-101 igénybevételkori hiba
+        mode: fail_on_demand
+        probability: 0.01
+  - id: XV101
+    type: shutdown_valve
+    function: stop_inflow
+    failure_modes:
+      - id: XV101_FOD
+        name: XV-101 nem zár igény esetén
+        mode: fail_on_demand
+        probability: 0.005
+
+relationships:
+  - from: P101
+    to: TK101
+    type: material_flow
+  - from: LT101
+    to: HMI
+    type: measurement
+  - from: LSHH101
+    to: XV101
+    type: trip_signal
+
+basic_events:
+  - id: HIGH_LEVEL_CHALLENGE
+    name: Magas szintű folyamatkihívás
+    probability: 0.08
+  - id: OPERATOR_MISS
+    name: Kezelő nem reagál időben
+    probability: 0.04
+  - id: MAINT_OVERDUE
+    name: Karbantartás elhalasztva
+    probability: 0.12
+  - id: IGNITION
+    name: Hatásos gyújtóforrás jelen van
+    probability: 0.10
+  - id: BUND_UNAVAILABLE
+    name: Folyadék-visszatartás nem hatásos
+    probability: 0.02
+  - id: FIRE_PROTECTION_FAIL
+    name: Tűzvédelmi funkció nem megfelelő / nem hatásos
+    probability: 0.05
+
+hazards:
+  - id: OVERFLOW
+    name: TK-101 túlfolyás
+    logic:
+      gate: AND
+      name: Túlfolyás kialakulása
+      inputs:
+        - event: HIGH_LEVEL_CHALLENGE
+        - gate: AND
+          name: Nincs hatásos automatikus és manuális megszakítás
+          inputs:
+            - gate: OR
+              name: Automatikus leállítás sikertelen
+              inputs:
+                - event: LSHH101_FOD
+                - event: XV101_FOD
+            - gate: OR
+              name: Manuális észlelés/beavatkozás sikertelen
+              inputs:
+                - event: LT101_LOW
+                - event: OPERATOR_MISS
+  - id: ESCALATED_FIRE
+    name: Túlfolyásból kialakuló eszkalált tűz
+    logic:
+      gate: AND
+      inputs:
+        - event: HIGH_LEVEL_CHALLENGE
+        - gate: AND
+          inputs:
+            - gate: OR
+              inputs:
+                - event: LSHH101_FOD
+                - event: XV101_FOD
+            - gate: OR
+              inputs:
+                - event: LT101_LOW
+                - event: OPERATOR_MISS
+        - event: IGNITION
+        - gate: OR
+          inputs:
+            - event: BUND_UNAVAILABLE
+            - event: FIRE_PROTECTION_FAIL

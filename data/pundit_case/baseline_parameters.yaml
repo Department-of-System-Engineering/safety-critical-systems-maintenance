@@ -1,0 +1,20 @@
+markov:
+  states: [S0_normal, S1_sensor_degraded, S2_protection_degraded, S3_high_level_challenge, S4_overflow, S5_fire]
+  rates_per_hour:
+    sensor_degradation: 0.002
+    maintenance_restore_sensor: 0.08
+    protection_degradation: 0.001
+    maintenance_restore_protection: 0.05
+    high_level_challenge: 0.004
+    recover_from_challenge: 0.20
+    overflow_from_challenge: 0.01
+    ignition_from_overflow: 0.03
+    contain_overflow: 0.10
+
+maintenance:
+  consequence_cost_huf: 50000000
+  planned_maintenance_cost_huf: 250000
+  immediate_production_loss_huf: 800000
+  opportunity_window_production_loss_huf: 100000
+  baseline_hazard_probability_now: 0.001
+  baseline_hazard_probability_wait: 0.02

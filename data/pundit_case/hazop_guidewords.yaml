@@ -1,0 +1,14 @@
+guidewords:
+  - NO
+  - MORE
+  - LESS
+  - REVERSE
+  - OTHER THAN
+parameters:
+  filling:
+    - flow
+    - level
+    - pressure
+  protection:
+    - signal
+    - shutdown
