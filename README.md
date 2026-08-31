@@ -2,11 +2,11 @@
 
 Notebook-first, böngészőből futtatható magyar egyetemi tananyag a Pannon Egyetem **Biztonságkritikus rendszerek és karbantartás** kurzusához.
 
-## Elsődleges tananyag
+## Tananyag
 
-A `course/` mappában 12, teljes tanegységként felépített Jupyter notebook található. A notebookok felépítése következetesen:
+A `course/` mappában 12 Jupyter notebook található. Minden tanegység ugyanazt a logikát követi:
 
-**elmélet → kézi/egyszerű példa → látható Python → eredményértelmezés → TK-101 alkalmazás → Próbáld ki! → összefoglalás**.
+**elmélet → egyszerű/kézi példa → látható Python → eredményértelmezés → TK-101 alkalmazás → Próbáld ki! → összefoglalás**.
 
 | Hét | Notebook |
 |---:|---|
@@ -25,40 +25,36 @@ A `course/` mappában 12, teljes tanegységként felépített Jupyter notebook t
 | 13 | `12_PUNDIT_INTEGRALT_ESET.ipynb` |
 | 14 | 2. ZH / projektbemutatók |
 
-## Böngészőből futtatás
+## Futtatás böngészőből
 
-1. Nyisd meg a repositoryt GitHubon.
-2. **Code → Codespaces → Create codespace on main**.
-3. Nyisd meg a `course/` mappából a kívánt notebookot.
-4. Futtasd a cellákat felülről lefelé.
+1. **Code → Codespaces → Create codespace on main**.
+2. Nyisd meg a `course/01_BIZTONSAGKRITIKUS_ALAPOK.ipynb` fájlt.
+3. Válaszd a Python kernelt.
+4. Haladj cellánként, vagy használd a **Run All** parancsot.
 
-A Codespace Python/Jupyter/Quarto környezetet kap. Helyi telepítés nem szükséges.
+Helyi telepítés nem szükséges.
 
-## Közös TK-101 eset
+## Közös eset
 
-A félév során ugyanaz az éghető folyadék fogadó- és tárolórendszer fejlődik tovább:
+A 12 notebook ugyanazt a TK-101 éghető folyadék fogadó- és tárolórendszert építi tovább:
 
 **system → hazards → PHA/FMEA/HAZOP → FTA → model-to-FTA → Bayes → Markov/Dynamic HAZOP → Monte Carlo → dependencies → maintenance → diagnosis → dynamic risk → RBM decision**.
+
+## Repository
+
+- `course/` – elsődleges tananyag;
+- `data/pundit_case/` – szintetikus oktatási adatok;
+- `src/safetycourse/` – újrahasznosítható háttérfüggvények;
+- `tests/` – unit tesztek;
+- `exercises/` – féléves hallgatói projekt és oktatói megjegyzések;
+- `project/` – PUNDIT educational-exploitation traceability és forrásregiszter;
+- `.devcontainer/` – böngészős Codespaces környezet;
+- `.github/workflows/validate.yml` – automatikus teszt és notebook-futtatás.
 
 ## PUNDIT
 
 A tananyag a PUNDIT projekt (`2020-1.2.3-EUREKA-2022-00021`) eredményeinek **oktatási hasznosítását** támogatja. Nem helyettesíti és önmagában nem igazolja a projekt eredeti műszaki vállalásainak teljesítését.
 
-## Technikai rétegek
+## Validáció
 
-- `course/` – elsődleges, futtatható tananyag;
-- `src/safetycourse/` – tesztelt háttérfüggvények validációhoz/integrációhoz;
-- `data/pundit_case/` – szintetikus oktatási case-adatok;
-- `chapters/` – korábbi Quarto szöveges referenciaanyag;
-- `_quarto.yml` – a notebookokból HTML/PDF könyv export;
-- `tools/course_*.py` – determinisztikus notebook-generátor;
-- `project/pundit_traceability.yml` – educational-exploitation traceability.
-
-## Ellenőrzés
-
-```bash
-pytest -q
-quarto render
-```
-
-A GitHub workflow a generált notebookokat tiszta kernelből végigfuttatja commit előtt.
+A GitHub Actions minden módosításnál lefuttatja a Python-teszteket és mind a 12 notebookot tiszta kernelből.
