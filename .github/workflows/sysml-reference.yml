@@ -1,0 +1,50 @@
+name: sysml-reference
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, work/sysml-adapter-english]
+    paths: ['models/sysml/**', 'scripts/ExportSysML.java', '.github/workflows/sysml-reference.yml']
+  pull_request:
+    paths: ['models/sysml/**', 'scripts/ExportSysML.java', '.github/workflows/sysml-reference.yml']
+permissions:
+  contents: read
+jobs:
+  native-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: sysml-pilot
+          create-args: >-
+            python=3.12
+            jupyter-sysml-kernel=0.62.0
+            openjdk=21
+            -c conda-forge
+          cache-environment: true
+      - name: Validate and export the native SysML model
+        shell: bash -el {0}
+        run: |
+          mkdir -p build/native
+          JAR=$(find "$CONDA_PREFIX" -name '*.jar' -path '*sysml*' | head -1)
+          LIB=$(find "$CONDA_PREFIX" -type d -name sysml.library | head -1)
+          test -n "$JAR"
+          test -n "$LIB"
+          echo "JAR=$JAR; LIB=$LIB"
+          javac -cp "$JAR" -d build/native scripts/ExportSysML.java
+          java -Xmx3g -cp "$JAR:build/native" ExportSysML "$LIB" models/sysml/tk101.sysml TK101Study build/native/tk101.export.json | tee build/native/validation.log
+          cp models/sysml/tk101.sysml build/native/tk101.sysml
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+          p = pathlib.Path('build/native')
+          json.loads((p/'tk101.export.json').read_text())
+          data = {'tool': 'SysML v2 Pilot Implementation', 'kernel_version': '0.62.0', 'source_sha256': hashlib.sha256((p/'tk101.sysml').read_bytes()).hexdigest(), 'export_sha256': hashlib.sha256((p/'tk101.export.json').read_bytes()).hexdigest(), 'source_commit': os.environ['GITHUB_SHA'], 'run_id': os.environ['GITHUB_RUN_ID'], 'native_validation': 'passed'}
+          (p/'provenance.json').write_text(json.dumps(data, indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-sysml-evidence
+          path: build/native/
+          retention-days: 30
