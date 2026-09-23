@@ -30,5 +30,9 @@ This register documents the internal teaching/project materials that informed th
 - Forecast probability is not automatically converted to FMEA occurrence score or Markov transition probability.
 - Normal forecast errors are not assumed without model justification.
 - MATLAB FTA examples are reimplemented in Python.
-- SysML is represented initially by a simplified SysML-derived YAML exchange model; no native SysML parser is claimed.
+- The original manually authored YAML is retained as a legacy exercise. The new SysML v2 source is parsed and validated by the official Pilot Implementation; Python adapts the actual metamodel export. No complete SysML parser or general model-based safety-analysis tool is claimed.
 - PUNDIT linkage is educational exploitation only unless separately demonstrated by project technical evidence.
+
+## Native SysML evidence
+
+The native model and its export are new demonstration artifacts, not a relabeling of the legacy YAML. `evidence/sysml_provenance.json` records the actual reference-tool run, source commit, version and SHA-256 hashes. The original internal source filenames above remain unchanged for retrieval and attribution, even where the source language is Hungarian.

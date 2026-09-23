@@ -13,12 +13,42 @@ def _validate_probability(p: float) -> float:
     return p
 
 
+def validate_tree(tree: dict, node_id: str | None = None, *, independent: bool = False) -> None:
+    """Reject cycles, unresolved/empty gates and unsupported probability semantics."""
+    if not isinstance(tree, dict) or not isinstance(tree.get("nodes"), dict):
+        raise ValueError("A fault tree needs a nodes mapping")
+    root = node_id or tree.get("top_event")
+    if not root or root not in tree["nodes"]:
+        raise ValueError("Missing top event")
+    leaves = set()
+
+    def visit(nid, ancestors):
+        if nid in ancestors:
+            raise ValueError("Cycle in fault tree")
+        if nid not in tree["nodes"]:
+            raise ValueError(f"Unknown node: {nid}")
+        node = tree["nodes"][nid]
+        kind = node.get("type", "").upper()
+        if kind == "BASIC":
+            _validate_probability(node["probability"])
+            if independent and nid in leaves:
+                raise ValueError("Repeated basic event: independent-input evaluation is invalid")
+            leaves.add(nid)
+            return
+        if kind not in {"AND", "OR"} or not node.get("children"):
+            raise ValueError(f"Unsupported or empty gate: {nid}")
+        for child in node["children"]:
+            visit(child, ancestors | {nid})
+    visit(root, set())
+
+
 def top_event_probability(tree: dict, node_id: str | None = None) -> float:
     """Evaluate a tree with BASIC, AND and OR nodes.
 
     AND/OR equations assume independence of the immediate input events.
     Shared basic events or common-cause mechanisms require a richer model.
     """
+    validate_tree(tree, node_id, independent=True)
     nodes = tree["nodes"]
     node_id = node_id or tree["top_event"]
 
@@ -41,6 +71,7 @@ def top_event_probability(tree: dict, node_id: str | None = None) -> float:
 
 def minimal_cut_sets(tree: dict, node_id: str | None = None) -> list[frozenset[str]]:
     """Derive minimal cut sets from a coherent AND/OR fault tree."""
+    validate_tree(tree, node_id)
     nodes = tree["nodes"]
     node_id = node_id or tree["top_event"]
 

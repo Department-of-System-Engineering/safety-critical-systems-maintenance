@@ -3,24 +3,73 @@ project_name: PUNDIT
 purpose: educational_exploitation
 technical_deliverable_claim: false
 primary_artifact_type: executable_teaching_notebook
-disclaimer: >-
-  Az itt bemutatott oktatási demonstráció a PUNDIT projekt eredményeinek
-  oktatási hasznosítását támogatja; nem helyettesíti és nem igazolja önmagában
-  a projekt eredeti műszaki vállalásainak teljesítését.
+disclaimer: This repository supports PUNDIT educational exploitation. Its restricted
+  native SysML adapter is a tested technical demonstration, not evidence of industrial
+  validation or automatic contractual acceptance.
 chapters:
-  - {chapter: 01, topic: "Reliability and risk foundations", pundit_link: "risk-based maintenance foundations", artifact: "course/01_BIZTONSAGKRITIKUS_ALAPOK.ipynb"}
-  - {chapter: 02, topic: "PHA, FMEA, HAZOP", pundit_link: "hazard identification and process safety analysis", artifact: "course/02_PHA_FMEA_HAZOP.ipynb"}
-  - {chapter: 03, topic: "Fault Tree Analysis", pundit_link: "probabilistic risk models", artifact: "course/03_FTA.ipynb"}
-  - chapter: 04
-    topic: Model-Based Risk Analysis
-    pundit_link: automated derivation of risk models from system models
-    artifact: course/04_MODELLALAPU_KOCKAZAT.ipynb
-    representation_note: simplified SysML-derived representation; not a native SysML parser
-  - {chapter: 05, topic: "Bayesian networks", pundit_link: "combined probabilistic models and diagnostic inference", artifact: "course/05_BAYES_HALOK.ipynb"}
-  - {chapter: 06, topic: "Markov models and Dynamic HAZOP", pundit_link: "dynamic risk modelling", artifact: "course/06_MARKOV_DYNAMIC_HAZOP.ipynb"}
-  - {chapter: 07, topic: "Monte Carlo and rare events", pundit_link: "uncertainty-aware risk estimation", artifact: "course/07_MONTE_CARLO_RITKA_ESEMENYEK.ipynb"}
-  - {chapter: 08, topic: "Redundancy and dependencies", pundit_link: "system-level risk dependencies", artifact: "course/08_REDUNDANCIA_FUGGOSEGEK.ipynb"}
-  - {chapter: 09, topic: "Maintenance strategies", pundit_link: "risk-based maintenance decision context", artifact: "course/09_KARBANTARTASI_STRATEGIAK.ipynb"}
-  - {chapter: 10, topic: "Fault diagnosis and sensor evidence", pundit_link: "condition monitoring and digital-twin evidence", artifact: "course/10_HIBADIAGNOSZTIKA.ipynb"}
-  - {chapter: 11, topic: "Dynamic risk and RBM", pundit_link: "dynamic risk-based maintenance support", artifact: "course/11_DINAMIKUS_KOCKAZAT_RBM.ipynb"}
-  - {chapter: 12, topic: "Integrated TK-101 case", pundit_link: "integrated educational demonstration", artifact: "course/12_PUNDIT_INTEGRALT_ESET.ipynb"}
+- chapter: 1
+  topic: Reliability and risk foundations
+  pundit_link: risk-based maintenance foundations
+  artifact: course/01_SAFETY_CRITICAL_FOUNDATIONS.ipynb
+- chapter: 2
+  topic: PHA, FMEA, HAZOP
+  pundit_link: hazard identification and process safety analysis
+  artifact: course/02_PHA_FMEA_HAZOP.ipynb
+- chapter: 3
+  topic: Fault Tree Analysis
+  pundit_link: probabilistic risk models
+  artifact: course/03_FTA.ipynb
+- chapter: 4
+  topic: Model-Based Risk Analysis
+  pundit_link: automated derivation of risk models from system models
+  artifact: course/04_MODEL_BASED_RISK.ipynb
+  representation_note: Legacy YAML exercise plus native SysML v2 Pilot JSON export
+    import, with documented risk annotations and explicit limits.
+- chapter: 5
+  topic: Bayesian networks
+  pundit_link: combined probabilistic models and diagnostic inference
+  artifact: course/05_BAYESIAN_NETWORKS.ipynb
+- chapter: 6
+  topic: Markov models and Dynamic HAZOP
+  pundit_link: dynamic risk modelling
+  artifact: course/06_MARKOV_DYNAMIC_HAZOP.ipynb
+- chapter: 7
+  topic: Monte Carlo and rare events
+  pundit_link: uncertainty-aware risk estimation
+  artifact: course/07_MONTE_CARLO_RARE_EVENTS.ipynb
+- chapter: 08
+  topic: Redundancy and dependencies
+  pundit_link: system-level risk dependencies
+  artifact: course/08_REDUNDANCY_DEPENDENCIES.ipynb
+- chapter: 09
+  topic: Maintenance strategies
+  pundit_link: risk-based maintenance decision context
+  artifact: course/09_MAINTENANCE_STRATEGIES.ipynb
+- chapter: 10
+  topic: Fault diagnosis and sensor evidence
+  pundit_link: condition monitoring and digital-twin evidence
+  artifact: course/10_FAULT_DIAGNOSIS.ipynb
+- chapter: 11
+  topic: Dynamic risk and RBM
+  pundit_link: dynamic risk-based maintenance support
+  artifact: course/11_DYNAMIC_RISK_RBM.ipynb
+- chapter: 12
+  topic: Integrated TK-101 case
+  pundit_link: integrated educational demonstration
+  artifact: course/12_PUNDIT_INTEGRATED_CASE.ipynb
+native_sysml_demonstration:
+  source: models/sysml/tk101.sysml
+  export: models/sysml/tk101.export.json
+  adapter: src/safetycourse/sysml_adapter.py
+  provenance: evidence/sysml_provenance.json
+  method: native-tool-validated model -> metamodel export -> risk exchange model ->
+    FTA
+  data_status: synthetic
+  supported_scope: SafetyComponent/RiskEvent annotations and acyclic AND/OR Boolean
+    hazards
+  not_claimed:
+  - full SysML language support
+  - AADL or Simulink import
+  - failure propagation inferred from physical topology
+  - industrial pilot validation
+  - formal acceptance of PUNDIT deliverables

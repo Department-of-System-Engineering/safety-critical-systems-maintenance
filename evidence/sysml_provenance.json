@@ -1,0 +1,9 @@
+{
+  "tool": "SysML v2 Pilot Implementation",
+  "kernel_version": "0.62.0",
+  "source_sha256": "227c07505c54fac9490d7ecfbda6c98115ec801604fbebb7e80676ad10db22ea",
+  "export_sha256": "f916e1807620a72c387487fe74c9ffb0e596cbe5af222b8449d348169dbe7567",
+  "source_commit": "fd64ed778ab43b53a840a3a979bf16e08f004127",
+  "run_id": "35839002637",
+  "native_validation": "passed"
+}

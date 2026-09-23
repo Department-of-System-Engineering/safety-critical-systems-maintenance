@@ -1,20 +1,26 @@
-# Féléves projekt – hallgatói kiírás
+# Semester project - student brief
 
-Válasszatok egy egyszerű biztonságkritikus vagy magas rendelkezésre állású műszaki rendszert. A rendszer legyen olyan méretű, hogy 6–15 releváns failure eventtel értelmesen modellezhető legyen.
+Choose a small safety-critical or high-availability engineering system that can be modeled meaningfully with 6-15 relevant failure events.
 
-## Kötelező elemek
+## Required elements
 
-1. System boundary és funkciók.
-2. PHA + FMEA + mini-HAZOP.
-3. FTA legalább 6 basic eventtel.
-4. Minimal cut sets és legalább egy importance/sensitivity vizsgálat.
-5. Strukturált YAML rendszerleírás és determinisztikus model-to-FTA transzformáció.
-6. Egy Bayes-diagnosztikai kérdés.
-7. Legalább 3 állapotú Markov-modell.
-8. Monte Carlo vagy uncertainty propagation.
-9. Common-cause/dependency megfontolás.
-10. Sensor/evidence demonstráció.
-11. Risk-informed maintenance döntés.
-12. Assumptions, limitations és validation plan.
+1. System boundary and functions.
+2. PHA, FMEA and a compact HAZOP.
+3. An FTA with at least six basic events.
+4. Minimal cut sets and at least one importance/sensitivity analysis.
+5. A structured risk exchange model and deterministic model-to-FTA transformation.
+6. A Bayesian diagnostic question.
+7. A Markov model with at least three states.
+8. Monte Carlo analysis or uncertainty propagation.
+9. Common-cause and dependency considerations.
+10. A sensor/evidence demonstration.
+11. A risk-informed maintenance decision.
+12. Assumptions, limitations and a validation plan.
 
-A numerikus adatok lehetnek szintetikusak, de ezt explicit módon jelölni kell. Valós ipari adat csak megfelelő engedéllyel használható.
+Synthetic numerical data are permitted but must be explicitly identified. Use industrial data only with appropriate permission.
+
+## Native SysML extension
+
+Start from `models/sysml/tk101.sysml`, change a supported part annotation or hazard expression, regenerate the export using the reference tool, and import it with `safetycourse.sysml_adapter`. Submit the source, the real tool export, source/export hashes, generated FTA and comparison with a hand calculation. A hand-edited JSON fixture tests the adapter but does not count as a newly validated SysML source/export pair.
+
+The advanced extension does not require implementing an industrial SysML tool or using AADL/Simulink.

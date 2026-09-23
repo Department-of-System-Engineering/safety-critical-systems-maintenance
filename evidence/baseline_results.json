@@ -1,0 +1,88 @@
+{
+  "OVERFLOW": {
+    "top_event_probability": 7.080320000000013e-05,
+    "minimal_cut_sets": [
+      [
+        "HIGH_LEVEL_CHALLENGE",
+        "LSHH101_FOD",
+        "LT101_LOW"
+      ],
+      [
+        "HIGH_LEVEL_CHALLENGE",
+        "LSHH101_FOD",
+        "OPERATOR_MISS"
+      ],
+      [
+        "HIGH_LEVEL_CHALLENGE",
+        "LT101_LOW",
+        "XV101_FOD"
+      ],
+      [
+        "HIGH_LEVEL_CHALLENGE",
+        "OPERATOR_MISS",
+        "XV101_FOD"
+      ]
+    ]
+  },
+  "ESCALATED_FIRE": {
+    "top_event_probability": 4.885420800000013e-07,
+    "minimal_cut_sets": [
+      [
+        "BUND_UNAVAILABLE",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "LSHH101_FOD",
+        "LT101_LOW"
+      ],
+      [
+        "BUND_UNAVAILABLE",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "LSHH101_FOD",
+        "OPERATOR_MISS"
+      ],
+      [
+        "BUND_UNAVAILABLE",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "LT101_LOW",
+        "XV101_FOD"
+      ],
+      [
+        "BUND_UNAVAILABLE",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "OPERATOR_MISS",
+        "XV101_FOD"
+      ],
+      [
+        "FIRE_PROTECTION_FAIL",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "LSHH101_FOD",
+        "LT101_LOW"
+      ],
+      [
+        "FIRE_PROTECTION_FAIL",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "LSHH101_FOD",
+        "OPERATOR_MISS"
+      ],
+      [
+        "FIRE_PROTECTION_FAIL",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "LT101_LOW",
+        "XV101_FOD"
+      ],
+      [
+        "FIRE_PROTECTION_FAIL",
+        "HIGH_LEVEL_CHALLENGE",
+        "IGNITION",
+        "OPERATOR_MISS",
+        "XV101_FOD"
+      ]
+    ]
+  }
+}

@@ -1,24 +1,9 @@
-# Notebook-first tananyag
+# Course notebooks
 
-Ez a mappa a **Biztonságkritikus rendszerek és karbantartás** kurzus elsődleges tananyagát tartalmazza.
+The twelve English notebooks follow the sequence in the root README. Each unit combines theory, a small hand calculation, visible Python, result interpretation, the common TK-101 case, exercises and a summary.
 
-A notebookok ajánlott sorrendje:
+Run notebooks from `course/` or from the repository root using a Python kernel with the project dependencies installed. Each notebook runs independently from a fresh kernel. Source notebooks deliberately do not contain stale execution outputs; `scripts/validate_notebooks.py` executes and saves reproducible copies under `build/executed/`.
 
-1. `01_BIZTONSAGKRITIKUS_ALAPOK.ipynb`
-2. `02_PHA_FMEA_HAZOP.ipynb`
-3. `03_FTA.ipynb`
-4. `04_MODELLALAPU_KOCKAZAT.ipynb`
-5. `05_BAYES_HALOK.ipynb`
-6. `06_MARKOV_DYNAMIC_HAZOP.ipynb`
-7. 1. ZH / integrációs checkpoint
-8. `07_MONTE_CARLO_RITKA_ESEMENYEK.ipynb`
-9. `08_REDUNDANCIA_FUGGOSEGEK.ipynb`
-10. `09_KARBANTARTASI_STRATEGIAK.ipynb`
-11. `10_HIBADIAGNOSZTIKA.ipynb`
-12. `11_DINAMIKUS_KOCKAZAT_RBM.ipynb`
-13. `12_PUNDIT_INTEGRALT_ESET.ipynb`
-14. 2. ZH / projektbemutatók
+Unit 4 first explains the legacy exchange representation and then imports a real SysML v2 reference-tool export. Unit 12 uses the native export as its system-model source. Changing `.sysml` requires regenerating the export; the provenance test rejects an out-of-date source/export pair.
 
-Minden notebook felépítése: **elmélet → kézi példa → látható Python → eredményértelmezés → TK-101 alkalmazás → Próbáld ki! → összefoglalás**.
-
-A `src/safetycourse/` modul nem helyettesíti a tanulási lépéseket: a notebookok először transzparensen felépítik az algoritmust, majd a közös modult validációra és integrált felhasználásra használják.
+Week 7 is the intermediate checkpoint and week 14 is the final assessment. The teaching scope is two teaching periods per week; advanced extensions can be assigned as independent project work.
