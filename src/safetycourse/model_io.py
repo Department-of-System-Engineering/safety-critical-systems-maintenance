@@ -1,4 +1,7 @@
-"""Read a simplified SysML-derived YAML representation and derive a fault tree."""
+"""Read a risk-model exchange representation and derive a fault tree.
+
+Inputs may be legacy teaching YAML or output of the native SysML export adapter.
+"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -54,8 +57,9 @@ def validate_system_model(model: dict) -> list[str]:
 def generate_fault_tree(model: dict, hazard_id: str) -> dict:
     """Generate an AND/OR fault tree from explicit failure-propagation rules.
 
-    The YAML is a simplified SysML-derived exchange representation, not a
-    native SysML parser. The transformation is deterministic and traceable.
+    This function is format-independent after import. The separate sysml_adapter
+    resolves a native SysML export; legacy YAML remains usable for teaching.
+    The transformation is deterministic and preserves source element IDs.
     """
     errors = validate_system_model(model)
     if errors:
@@ -76,15 +80,20 @@ def generate_fault_tree(model: dict, hazard_id: str) -> dict:
                 "type": "BASIC",
                 "probability": float(item["probability"]),
                 "name": item.get("name", eid),
+                "source_element_id": expr.get("source_element_id", item.get("source_element_id")),
             }
             return eid
         gate_counter += 1
         gid = preferred_id or f"G{gate_counter:02d}"
+        while not preferred_id and (gid in catalog or gid in nodes or gid == hazard_id):
+            gate_counter += 1
+            gid = f"G{gate_counter:02d}"
         children = [convert(child) for child in expr["inputs"]]
         nodes[gid] = {
             "type": str(expr["gate"]).upper(),
             "children": children,
             "name": expr.get("name", gid),
+            "source_element_id": expr.get("source_element_id"),
         }
         return gid
 

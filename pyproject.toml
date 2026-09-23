@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "safetycourse"
-version = "0.1.0"
+version = "0.2.0"
 description = "Teaching utilities for Safety-Critical Systems and Maintenance"
 requires-python = ">=3.10"
 dependencies = [
@@ -20,8 +20,13 @@ dependencies = [
 dev = [
   "pytest>=8.0",
   "jupyter>=1.0",
-  "nbformat>=5.9"
+  "nbformat>=5.9",
+  "nbconvert>=7.16",
+  "ipykernel>=6.29"
 ]
+
+[project.scripts]
+safetycourse-sysml = "safetycourse.sysml_adapter:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

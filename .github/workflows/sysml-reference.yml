@@ -1,0 +1,70 @@
+name: sysml-reference
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, work/sysml-adapter-english]
+    paths: ['models/sysml/**', 'scripts/ExportSysML.java', 'scripts/locate_sysml_runtime.py', '.github/workflows/sysml-reference.yml']
+  pull_request:
+    paths: ['models/sysml/**', 'scripts/ExportSysML.java', 'scripts/locate_sysml_runtime.py', '.github/workflows/sysml-reference.yml']
+permissions:
+  contents: read
+jobs:
+  native-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: sysml-pilot
+          create-args: >-
+            python=3.12
+            jupyter-sysml-kernel=0.62.0
+            openjdk=21
+            -c conda-forge
+          cache-environment: true
+      - name: Validate and export the native SysML model
+        shell: bash -el {0}
+        run: |
+          set -euo pipefail
+          mkdir -p build/native
+          JAR=$(python scripts/locate_sysml_runtime.py --field jar)
+          LIB=$(python scripts/locate_sysml_runtime.py --field library)
+          test -n "$JAR"
+          test -n "$LIB"
+          javac -cp "$JAR" -d build/native scripts/ExportSysML.java
+          java -Xmx3g -cp "$JAR:build/native" ExportSysML "$LIB" models/sysml/tk101.sysml TK101Study build/native/tk101.export.json | tee build/native/validation.log
+          cp models/sysml/tk101.sysml build/native/tk101.sysml
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+          p = pathlib.Path('build/native')
+          json.loads((p/'tk101.export.json').read_text())
+          data = {'tool': 'SysML v2 Pilot Implementation', 'kernel_version': '0.62.0', 'source_sha256': hashlib.sha256((p/'tk101.sysml').read_bytes()).hexdigest(), 'export_sha256': hashlib.sha256((p/'tk101.export.json').read_bytes()).hexdigest(), 'source_commit': os.environ['GITHUB_SHA'], 'run_id': os.environ['GITHUB_RUN_ID'], 'native_validation': 'passed'}
+          (p/'provenance.json').write_text(json.dumps(data, indent=2)+'\n')
+          PY
+      - name: Verify fresh export with the Python adapter
+        shell: bash -el {0}
+        run: |
+          set -euo pipefail
+          python -m pip install -e '.[dev]'
+          python -m safetycourse.sysml_adapter build/native/tk101.export.json --output-dir build/native/results
+          python - <<'PY'
+          import json, math
+          from pathlib import Path
+          expected = json.loads(Path('evidence/baseline_results.json').read_text())
+          actual = json.loads(Path('build/native/results/results.json').read_text())
+          for name in expected:
+              assert math.isclose(actual[name]['top_event_probability'], expected[name]['top_event_probability'], rel_tol=1e-12)
+              assert actual[name]['minimal_cut_sets'] == expected[name]['minimal_cut_sets']
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-sysml-evidence
+          path: |
+            build/native/tk101.sysml
+            build/native/tk101.export.json
+            build/native/provenance.json
+            build/native/validation.log
+            build/native/results/
+          retention-days: 30
