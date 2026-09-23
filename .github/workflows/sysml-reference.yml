@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main, work/sysml-adapter-english]
-    paths: ['models/sysml/**', 'scripts/ExportSysML.java', '.github/workflows/sysml-reference.yml']
+    paths: ['models/sysml/**', 'scripts/ExportSysML.java', 'scripts/locate_sysml_runtime.py', '.github/workflows/sysml-reference.yml']
   pull_request:
-    paths: ['models/sysml/**', 'scripts/ExportSysML.java', '.github/workflows/sysml-reference.yml']
+    paths: ['models/sysml/**', 'scripts/ExportSysML.java', 'scripts/locate_sysml_runtime.py', '.github/workflows/sysml-reference.yml']
 permissions:
   contents: read
 jobs:
@@ -28,8 +28,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p build/native
-          JAR=$(find "$CONDA_PREFIX" -name '*.jar' -path '*sysml*' -print -quit)
-          LIB=$(find "$CONDA_PREFIX" -type d -name sysml.library -print -quit)
+          JAR=$(python scripts/locate_sysml_runtime.py --field jar)
+          LIB=$(python scripts/locate_sysml_runtime.py --field library)
           test -n "$JAR"
           test -n "$LIB"
           javac -cp "$JAR" -d build/native scripts/ExportSysML.java

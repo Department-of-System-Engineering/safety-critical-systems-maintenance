@@ -60,11 +60,13 @@ To run the same process locally after installing that reference-tool environment
 
 ```bash
 mkdir -p build/native
-JAR=$(find "$CONDA_PREFIX" -name '*.jar' -path '*sysml*' | head -1)
-LIB=$(find "$CONDA_PREFIX" -type d -name sysml.library | head -1)
+JAR=$(python scripts/locate_sysml_runtime.py --field jar)
+LIB=$(python scripts/locate_sysml_runtime.py --field library)
 javac -cp "$JAR" -d build/native scripts/ExportSysML.java
 java -Xmx3g -cp "$JAR:build/native" ExportSysML "$LIB" models/sysml/tk101.sysml TK101Study build/native/tk101.export.json
 ```
+
+The locator selects the JAR by its `SysMLInteractive` class, not by a directory-name match that could select an unrelated Java runtime archive.
 
 After a successful run, replace the checked-in export and refresh `evidence/sysml_provenance.json` and `evidence/sysml_validation.log` together. Do not edit the export manually and call it a reference-tool result. Exported element UUIDs can change between reference-tool runs; semantic regression results must remain equivalent. Provenance tests check the source/export bytes against their recorded run, not global UUID stability.
 
